@@ -20,15 +20,22 @@ public abstract class Element {
 	public final String name;
 	
 	/**
-	 * Constructs an element with the given name. Basic checks are performed to ensure that the name
+	 * The parent element. If the parent is null, then this element is the root.
+	 */
+	private final Element parent;
+	
+	/**
+	 * Constructs an element with the given name and parent element. Basic checks are performed to ensure that the name
 	 * is valid.
 	 * 
 	 * @param _name element name
+	 * @param _parent the parent element (can be null to indicate that this element is the root)
 	 * @throws CompilationError if the name is invalid
 	 */
-	protected Element(final String _name) throws CompilationError {
+	protected Element(final String _name, final Element _parent) throws CompilationError {
 		ensureIsClean(_name);
 		name = _name;
+		parent = _parent;
 	}
 	
 	/**
@@ -64,25 +71,20 @@ public abstract class Element {
 	 * @return full path to this element
 	 */
 	public String getPath() {
-		return getPathFrom(getParent());
-	}
-	
-	/**
-	 * Gets the path from another element to this.
-	 * 
-	 * @param root
-	 * @return
-	 */
-	public String getPathFrom(final Element root) {
-		// TODO: Add checks to ensure that 'root' is not below this element
+		if (parent == null) {
+			return "/" + name;
+		}
 		
-		return root.getPath() + "/" + getSimpleName();
+		return parent.getPath() + "/" + name;
 	}
+
 	
 	/**
-	 * Returns the parent of this element in the tree.
+	 * Returns the parent of this element in the tree. The parent can be null.
 	 * 
-	 * @return parent
+	 * @return parent parent element
 	 */
-	public abstract Element getParent();
+	public Element getParent() {
+		return parent;
+	}
 }
